@@ -111,7 +111,6 @@ def parse_args():
 
 def main():
     args = parse_args()
-    # 旧的 read_conf 使用 OptionParser，会重新解析 sys.argv，不认识我们新增的 --scp 等参数。
     # 这里与预训练脚本一致：临时伪造 argv 只保留 --cfg，防止报 "no such option"。
     orig_argv = sys.argv
     try:
@@ -168,3 +167,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
