@@ -1,29 +1,11 @@
 """Contrastive pretraining for Sinc-MSA (SincNet + Multi-Head Self-Attention) voiceprint backbone.
-
-逻辑说明（中文）：
-1. 目的：先在每个折(fold)的训练数据上，用对比学习(contrastive learning, NT-Xent / InfoNCE)预训练声纹表示，使 Sinc + MSA 学到纯声纹判别特征，不受下游多模态标签限制。
-2. 训练策略：
-   - 每个 batch 从训练列表随机采样若干音频，针对每条音频随机裁剪两段（或两种数据增强后的片段）作为正样本对 (view1, view2)。
-   - 所有不同音频之间的样本视为负样本。
-   - 使用温度缩放的 NT-Xent 损失函数：最大化同一音频两视图余弦相似度，最小化不同音频间相似度。
-3. 模型：复用 SincNet_attention_gnn，只取其中返回的表征 (tsne_data)。不使用分类头的输出 logits。
-4. 投影头（Projection Head）：常规 SimCLR 做法会再加一层/两层 MLP 做到 128 维；这里默认添加 Linear -> ReLU -> Linear 到 128 维，可通过参数关闭。
-5. 优化器：RMSprop，lr=0.03（可调），epochs=200（可调），batch_size=256（可调）。
-6. 每折都会单独训练并保存最佳(最小 loss)权重：pretrain_voiceprint_fold{fold_i}_best.pth
-7. 后续融合阶段：加载该 checkpoint，只冻结 conv(Sinc) + mul_attention 模块的参数即可：
-       for p in model.conv.parameters(): p.requires_grad = False
-       for p in model.mul_attention.parameters(): p.requires_grad = False
-   （可选）若希望完全固定声纹表示，也可再冻结 fc_audio1。
-
-运行最简示例：
+运行示例：
     python voiceprint/pretrain_contrastive_voiceprint.py \
         --cfg voiceprint/cfg/5fold_train_up.cfg \
         --tr-list-prefix lists/train \
         --folds 5 \
         --save-dir pretrain_ckpts_voiceprint \
         --epochs 200 --batch-size 256 --lr 0.03
-
-作者：自动生成脚本 (2025)
 """
 
 import os
@@ -289,3 +271,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
