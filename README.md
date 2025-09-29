@@ -42,7 +42,7 @@ python emotion\extract_ast_features.py --scp lists/test0.scp --dataset daic  --c
 ## 声纹
 （1）使用对比学习对训练数据进行预训练
 ```
-python voiceprint/pretrain_contrastive_voiceprint.py --cfg voiceprint/cfg/5fold_train_up.cfg --tr-list-prefix lists/train --folds 1 --save-dir pretrain_ckpts_voiceprint --epochs 200 --batch-size 256 --lr 0.03 --temperature 0.07 --proj-dim 0
+python voiceprint/pretrain_contrastive_voiceprint.py --cfg voiceprint/cfg/5fold_train_up.cfg --tr-list-prefix lists/train --folds 1 --save-dir pretrain_ckpts_voiceprint --epochs 200 --batch-size 256 --lr 0.03 --temperature 0.1 --proj-dim 0
 ```
 
 将模型参数放置在pretrain_ckpts_voiceprint文件夹中
