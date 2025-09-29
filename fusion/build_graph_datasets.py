@@ -1,35 +1,6 @@
 """Build PyG graph dataset (.pt lists) for fusion model.
 
-该脚本把已提取的各模态特征(voiceprint/attsinc, emotion, pause, energy, tremor)组装成
-`fuse_train_all_loss_5fold.py` 期望的 data_train_{fold}.pt / data_val_{fold}.pt / data_test_{fold}.pt。
-
-核心要点 (与现有 GNN 模型结构对齐):
-1. 模型训练阶段 DataLoader 取出的一个 batch 会生成 `data.x` 形状: (batch*5, 2*num_att_features)
-   - 代码里: batch_now = data.x.shape[0] // 5
-   - reshape -> (batch_now, 5, 2, num_att_features)
-   - 因此每个样本有 5 个“节点”(modalities)，每节点的特征向量长度 = 2 * num_att_features
-     (中间分成 2 个 channel)。
-2. 各节点语义 (顺序固定):
-   0: attsinc / voiceprint  (channel0=embedding, channel1=0)
-   1: emotion               (channel0=embedding, channel1=0)
-   2: pause                 (channel0=包含 num_pause_input 个数值(被按6维一组分帧), channel1=0)
-   3: energy                (channel0=能量序列第1维, channel1=能量序列第2维)
-   4: tremor (jitter/shimmer) (channel0=序列第1维, channel1=序列第2维)
-3. 能量与颤抖特征在模型里被视为: 序列长度 = num_enegy_features / num_tromer_features (即最后一维长度), 每个时间步 input_size=2 (两个 channel)。
-4. pause 特征: 6 维统计值 -> 需要扩展/平铺成 (num_pause_input) 长度，可通过重复复制填满；模型 reshape 时再还原成 (num_pause_input//6, 6)。
-
-输入假设:
- - voiceprint_dir: 包含 voice_embeddings.npy 与 filenames.txt (行顺序对应)
- - emotion_dir:   若存在 aggregated/*.npy 每文件一个; 否则只有 segments/*.npy (命名含原文件前缀 + '_seg')，将自动聚合平均
- - pause_dir:     每文件一个 {basename}.txt (6 数值)
- - energy_dir:    每文件一个 {basename}.txt 或 .npy，格式 (2, T) (两行: EN, EN_tea) / (T,2) 也可, 自动转置
- - tremor_dir:    每文件一个 {basename}.txt 或 .npy，格式 (2, T) (f0, amplitude)
- - labels_file:   CSV 或 txt，格式: basename,label  (逗号或空白分隔). label 为 int
- - train/val/test scp: 里面列出 wav 文件名或 basename (自动去掉扩展名，仅取前部)
-
-注意: basename 统一定义为去掉扩展名的原始 wav 文件名 (不含路径)。emotion 段级文件若命名为 basename_segXXXX.npy，聚合时按 basename 匹配。
-
-使用示例:
+example:
     python fusion/build_graph_datasets.py \
         --voiceprint-dir voiceprint_features_fold0 \
         --emotion-dir features_emotion_daic_segments \ 
@@ -442,3 +413,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
