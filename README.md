@@ -5,6 +5,7 @@ pip install -r requirements.txt
 ```
 # 生成各模态特征
 ## 停顿 / 能量 / 颤抖
+每个文件分别运行三次提取train,dev,test的特征，修改代码中的路径(save_wav_files_train_46_18,save_wav_files_dev_20_20,save_wav_files_test_20_20)
 ```
 python pause_energy_tremor/data_process_pause.py
 python pause_energy_tremor/data_process_energy.py
