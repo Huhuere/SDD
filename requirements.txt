@@ -1,0 +1,41 @@
+###############################
+# Reproducible Environment Pins
+# Reason: You hit a runtime error because NumPy 2.2.6 was installed while
+# PyTorch 1.13.x / torch-scatter / torch-sparse wheels were compiled against NumPy 1.x.
+# PyTorch 1.13.1 does NOT support NumPy 2.x runtime yet. Pinning numpy<2 fixes the ABI mismatch.
+# If you later upgrade to torch>=2.1 you can relax this to numpy>=1.26,<3.
+###############################
+
+numpy==1.24.4            # <2.0 to keep compatibility with torch 1.13.1 / PyG wheels
+librosa==0.10.1          # Compatible with numpy 1.24.x
+pandas==1.5.3
+matplotlib==3.7.2
+SoundFile==0.12.1
+pydub==0.25.1
+tqdm==4.66.1
+scikit-learn==1.3.2
+wget==3.2
+
+# Core DL stack (install torch/torchaudio via official index with proper CPU/CUDA tag)
+torch==1.13.1            # Install with +cpu or +cu11x wheel separately
+torchaudio==0.13.1       # Must match torch version
+
+# Vision transformer backbone requirement (asserted in models.py)
+timm==0.4.5
+
+# torch-geometric and its extension packages SHOULD NOT be blindly installed from this file.
+# Follow manual wheel instructions, e.g. (CPU example):
+# pip install torch-scatter -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+# pip install torch-sparse  -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+# pip install torch-cluster -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+# pip install torch-spline-conv -f https://data.pyg.org/whl/torch-1.13.0+cpu.html
+# pip install torch-geometric==2.3.1
+# (Do this AFTER installing the matching torch / torchaudio wheels.)
+
+# If you insist on putting torch-geometric here, pin it, but be aware pip may try to
+# build from source on Windows which often fails without a full C++ toolchain:
+# torch-geometric==2.3.1
+
+###############################
+# End of pinned requirements
+###############################
