@@ -1,27 +1,3 @@
-"""更稳健的全数据集 fbank mean/std 计算脚本。
-
-修复点：
-1. 原脚本如果目录路径写错 (FileNotFoundError) 会直接异常退出，只看到 exit code=1；
-2. 一次性把所有 fbank 堆叠进内存，数据多时易 OOM；
-3. 没有进度、没打印找到多少 wav；
-4. 打印标签写成 RAVDESS，容易混淆；
-
-改进：
- - 使用流式累计 sum / sum of squares 计算 mean/std；
- - 加参数：--dir, --ext, --target-length, --melbins, --resample, --every-n；
- - 发生错误打印具体文件与异常，但不中断整体流程；
- - 最终输出 JSON 方便复制。
-
-使用示例（在 emotion 目录或项目根执行都可）：
-  python emotion/calculate_mean_std.py --dir emotion/save_wav_files_train_46_18 --resample 16000
-
-或如果当前工作目录已经是 emotion/：
-  python calculate_mean_std.py --dir save_wav_files_train_46_18
-
-快速抽样（每 5 个文件取 1 个估计）：
-  python calculate_mean_std.py --dir save_wav_files_train_46_18 --every-n 5
-"""
-
 import os
 import math
 import json
@@ -355,4 +331,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     raise SystemExit(main())
