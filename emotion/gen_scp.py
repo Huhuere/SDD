@@ -5,20 +5,6 @@ Example:
     --dirs save_wav_files_train_46_18 save_wav_files_dev_20_20 save_wav_files_test_20_20 \
     --out-names train_0.scp val_0.scp test_0.scp \
     --ext .wav
-
-Each produced .scp will contain relative paths (dir/filename.wav) sorted lexicographically.
-
-Notes for 'daic' dataset usage with current dataloader:
-  1) The dataloader (dataset_name=='daic') currently builds path as './' + audio_name. So if you run from emotion/ directory,
-     the relative path lines here must be valid from that working directory.
-  2) It also parses label by splitting filename with '_' and reading index 2:  int(audio_name.split('_')[2]) == 0 => class 0 else class 1.
-     Ensure your filenames follow pattern like: <subject>_<something>_<0or1>_... .wav
-  3) There is a brittle line in dataloader for daic:  (self.dataset_json_file.split('/')[1]) ... which will fail if the .scp path has no '/'.
-     Workaround: store .scp inside a subfolder e.g. 'lists/train_0.scp' OR modify the code.
-
-To keep things simple, this script by default writes .scp files into a 'lists' subdirectory so that path includes '/'.
-
-If you want subject-level aggregation later, ensure naming consistency so subject id = filename.split('_')[0].
 """
 
 import argparse
@@ -80,3 +66,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
