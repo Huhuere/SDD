@@ -5,7 +5,6 @@ example:
         --voiceprint-dir voiceprint_features_fold0 \
         --emotion-dir features_emotion_daic_segments \ 
         --pause-dir pause --energy-dir energy --tremor-dir tremor \
-        --labels labels.txt \
         --train-prefix lists/train --val-prefix lists/val --test-prefix lists/test \
         --folds 5 \
         --num-att-features 256 --num-pause-input 60 --num-enegy-features 100 --num-tromer-features 100 \
@@ -413,4 +412,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
