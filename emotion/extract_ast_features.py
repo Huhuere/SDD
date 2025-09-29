@@ -11,35 +11,6 @@ Usage example (after you fine-tuned on RAVDESS and got a best checkpoint):
         --audio-length 512 \
         --dataset-mean -8.73210334777832 \
         --dataset-std 6.587666034698486
-
-Steps required beforehand:
- 1. Prepare audio files (resampled to 16 kHz mono) in the expected relative folder used inside dataloader:
-       For dataset == 'daic' the path is './<filename>' (already handled). Place this script inside emotion/.
- 2. Build an .scp file (one audio filename per line) like 'daic_all.scp'.
- 3. Provide the fine-tuned checkpoint from RAVDESS (label_dim may differ; we auto-detect output dim).
- 4. (Optional) Compute DAIC-specific mean/std first with a temporary run using --skip-norm logic (not implemented here yet) or reuse RAVDESS stats.
-
-The script outputs:
-  - segment_features.npy : shape (N_segments, 768)
-  - segment_filenames.txt : list of filenames (same order as rows)
-  - segment_labels.npy (multi-hot or one-hot derived) if available
-  - subject_mean_features.npy (aggregated by subject id rule) & subject_ids.txt
-  - individual .npy per segment under output-dir/segments/ (optional toggle)
-
-Subject id extraction:
-  For dataset == 'daic' we use filename.split('_')[0]. Modify via --subject-split-idx if needed.
-
-Integration into fusion:
-    Default now projects 768-d AST embedding down to 256-d (configurable) for easier fusion with other 256-d modalities.
-    A linear (SVD/PCA style) projection matrix + mean can be saved and reapplied to validation/test sets to keep consistency.
-    Per-segment .npy files are ALWAYS saved now (one file per audio segment) after (optional) projection.
-
-New CLI arguments:
-    --proj-dim 256            Target dimension (<768 to enable projection, =768 or 0 to disable)
-    --proj-method svd         Projection method: svd (fast PCA via SVD) or none
-    --save-projection         Save projection_mean.npy & projection_matrix.npy in output dir (when fitting)
-    --apply-existing-projection <dir>  Reuse previously saved projection params (skip refit)
-    --no-subject-agg          Keep only segment-level outputs (recommended for segment fusion)
 """
 
 import argparse
@@ -307,3 +278,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
